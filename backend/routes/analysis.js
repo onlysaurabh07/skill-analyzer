@@ -64,6 +64,7 @@ Return ONLY a valid JSON object with the following structure (no markdown, no ex
 Generate a 6-week roadmap covering the most critical missing skills. Provide 2-3 real, accurate resource URLs per week.`;
 
     let analysis;
+    let isSampleData = false;
     try {
       const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
@@ -74,52 +75,40 @@ Generate a 6-week roadmap covering the most critical missing skills. Provide 2-3
       const raw = completion.choices[0].message.content.trim();
       analysis = JSON.parse(raw);
     } catch (err) {
-      console.warn('OpenAI error (possibly quota/key), falling back to mock data:', err.message);
+      console.warn('OpenAI error (possibly quota/key), falling back to dynamic mock data:', err.message);
+      isSampleData = true;
       
-      // MOCK DATA FALLBACK
+      // DYNAMIC MOCK DATA FALLBACK
+      const target = jobTarget.toLowerCase();
+      
+      let mockSkills = ["Project Management", "Team Collaboration", "Problem Solving"];
+      let mockMissing = ["Technical Documentation", "Product Strategy"];
+      
+      if (target.includes('devops') || target.includes('cloud')) {
+        mockSkills = ["Docker", "Linux", "Git", "JavaScript"];
+        mockMissing = ["Kubernetes", "Terraform", "AWS", "Jenkins", "Prometheus"];
+      } else if (target.includes('full stack') || target.includes('frontend') || target.includes('backend') || target.includes('web')) {
+        mockSkills = ["React", "Node.js", "JavaScript", "HTML", "CSS"];
+        mockMissing = ["TypeScript", "Next.js", "Docker", "Redux", "GraphQL"];
+      } else if (target.includes('ml') || target.includes('machine learning') || target.includes('data') || target.includes('ai')) {
+        mockSkills = ["Python", "SQL", "Statistics", "Data Visualization"];
+        mockMissing = ["PyTorch", "TensorFlow", "Scikit-Learn", "Feature Engineering", "MLOps"];
+      } else if (target.includes('ui') || target.includes('ux') || target.includes('design')) {
+        mockSkills = ["Figma", "Visual Design", "HTML", "CSS"];
+        mockMissing = ["Prototyping", "User Research", "Wireframing", "Adobe XD", "Accessibility"];
+      }
+
       analysis = {
-        resumeSkills: ["React", "Node.js", "JavaScript", "HTML", "CSS"],
-        matchingSkills: ["React", "Node.js", "JavaScript"],
-        missingSkills: ["TypeScript", "Docker", "AWS", "GraphQL"],
-        matchScore: 75,
-        roadmap: [
-          {
-            week: 1,
-            focus: "TypeScript Fundamentals",
-            topics: ["Types", "Interfaces", "Generics"],
-            resources: [{ title: "TS Handbook", url: "https://www.typescriptlang.org/docs/", type: "doc" }]
-          },
-          {
-            week: 2,
-            focus: "Docker Basics",
-            topics: ["Containers", "Images", "Docker Compose"],
-            resources: [{ title: "Docker Get Started", url: "https://docs.docker.com/get-started/", type: "doc" }]
-          },
-          {
-            week: 3,
-            focus: "AWS Core Services",
-            topics: ["EC2", "S3", "Lambda"],
-            resources: [{ title: "AWS Training", url: "https://explore.skillbuilder.aws/", type: "course" }]
-          },
-          {
-            week: 4,
-            focus: "GraphQL with Apollo",
-            topics: ["Queries", "Mutations", "Schemas"],
-            resources: [{ title: "Apollo Odyssey", url: "https://www.apollographql.com/tutorials/", type: "course" }]
-          },
-          {
-            week: 5,
-            focus: "Advanced AWS",
-            topics: ["IAM", "VPC", "RDS"],
-            resources: [{ title: "AWS Whitepapers", url: "https://aws.amazon.com/whitepapers/", type: "article" }]
-          },
-          {
-            week: 6,
-            focus: "CI/CD & Deployment",
-            topics: ["GitHub Actions", "Terraform"],
-            resources: [{ title: "GitHub Actions Guide", url: "https://docs.github.com/en/actions", type: "doc" }]
-          }
-        ]
+        resumeSkills: mockSkills,
+        matchingSkills: mockSkills.slice(0, 3),
+        missingSkills: mockMissing,
+        matchScore: 65 + Math.floor(Math.random() * 20),
+        roadmap: mockMissing.map((skill, index) => ({
+          week: index + 1,
+          focus: `Mastering ${skill}`,
+          topics: [`${skill} Basics`, `Advanced ${skill} Patterns`, `Real-world ${skill} Project`],
+          resources: [{ title: `${skill} Official Docs`, url: `https://google.com/search?q=${encodeURIComponent(skill + ' documentation')}`, type: "doc" }]
+        }))
       };
     }
 
@@ -133,6 +122,7 @@ Generate a 6-week roadmap covering the most critical missing skills. Provide 2-3
       missingSkills: analysis.missingSkills || [],
       resumeSkills: analysis.resumeSkills || [],
       roadmap: analysis.roadmap || [],
+      isSampleData: isSampleData,
     });
 
     res.json(saved);

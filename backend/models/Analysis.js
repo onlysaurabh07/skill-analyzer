@@ -21,6 +21,7 @@ const analysisSchema = new mongoose.Schema({
   missingSkills: [String],
   resumeSkills: [String],
   roadmap: [roadmapWeekSchema],
+  isSampleData: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Analysis', analysisSchema);

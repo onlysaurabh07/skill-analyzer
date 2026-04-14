@@ -92,6 +92,19 @@ export default function Results() {
           </div>
         </div>
 
+        {/* Demo Mode Alert */}
+        {data.isSampleData && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="text-2xl mt-0.5">⚠️</div>
+            <div>
+              <h3 className="text-amber-400 font-semibold">Demo Mode Active</h3>
+              <p className="text-amber-200/70 text-sm leading-relaxed">
+                The AI analysis service is currently unavailable (Quota Exceeded). We are showing <strong>simulated data</strong> based on your target role so you can still preview the experience.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Score Card */}
         <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8">
           <ScoreRing score={data.matchScore} />
