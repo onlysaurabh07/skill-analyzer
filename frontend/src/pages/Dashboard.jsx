@@ -4,11 +4,16 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
 function ScoreBadge({ score }) {
-  const color = score >= 70 ? 'text-green-400 bg-green-500/10 border-green-500/30'
-    : score >= 40 ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30'
-    : 'text-red-400 bg-red-500/10 border-red-500/30';
+  const color = score >= 70 ? '#c8f135' : score >= 40 ? '#f5c518' : '#ff5c5c';
   return (
-    <span className={`inline-block px-2.5 py-0.5 rounded-full border text-xs font-bold ${color}`}>
+    <span style={{
+      fontFamily: "'Space Mono', monospace",
+      fontSize: '11px',
+      color: color,
+      padding: '4px 8px',
+      border: `1px solid ${color}40`,
+      borderRadius: '2px'
+    }}>
       {score}%
     </span>
   );
@@ -33,110 +38,158 @@ export default function Dashboard() {
   const bestScore = history.length ? Math.max(...history.map(h => h.matchScore)) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-900 pt-24 pb-16 px-4">
-      <div className="absolute top-24 left-1/3 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="max-w-5xl mx-auto">
+    <div style={{
+      minHeight: '100vh',
+      background: '#0d0d0d',
+      color: '#e8e4dc',
+      paddingTop: '100px',
+      paddingBottom: '80px',
+    }}>
+      <div className="page-wrap" style={{ maxWidth: '1000px' }}>
+        
         {/* Welcome Header */}
-        <div className="mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          marginBottom: '64px',
+          borderBottom: '1px solid #141414',
+          paddingBottom: '40px',
+        }}>
           <div>
-            <h1 className="text-3xl font-bold text-white">
-              Welcome back, {user?.name?.split(' ')[0]} 👋
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
+              — user overview
+            </div>
+            <h1 style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: 'clamp(56px, 8vw, 80px)',
+              lineHeight: 0.9,
+              color: '#f0ece4',
+              textTransform: 'uppercase',
+            }}>
+              Welcome Back, {user?.name?.split(' ')[0]}
             </h1>
-            <p className="text-slate-400 mt-1">Here's your skill gap overview</p>
           </div>
-          <Link
-            to="/analyze"
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-violet-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-blue-500/20 hover:scale-105 whitespace-nowrap"
-          >
-            ⚡ New Analysis
-          </Link>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px' }}>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '15px', color: '#666', maxWidth: '400px', lineHeight: 1.6 }}>
+              Here is your skill gap overview and analysis history. Start a new analysis to see how your gaps have closed.
+            </p>
+            <Link to="/analyze" className="btn-raw">
+              New Analysis →
+            </Link>
+          </div>
         </div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        {/* Stats Row - pure text grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1px', background: '#141414', marginBottom: '64px' }}>
           {[
-            { label: 'Total Analyses', value: history.length, icon: '📊', color: 'from-blue-500/20 to-blue-600/10 border-blue-500/20' },
-            { label: 'Avg Match Score', value: `${avgScore}%`, icon: '🎯', color: 'from-violet-500/20 to-violet-600/10 border-violet-500/20' },
-            { label: 'Best Score', value: `${bestScore}%`, icon: '🏆', color: 'from-green-500/20 to-green-600/10 border-green-500/20' },
-          ].map((s) => (
-            <div key={s.label} className={`bg-gradient-to-br ${s.color} border rounded-2xl p-6`}>
-              <div className="text-2xl mb-2">{s.icon}</div>
-              <div className="text-3xl font-extrabold text-white">{s.value}</div>
-              <div className="text-slate-400 text-sm mt-1">{s.label}</div>
+            { label: 'Total Analyses', value: history.length },
+            { label: 'Avg Match Score', value: `${avgScore}%` },
+            { label: 'Best Score', value: `${bestScore}%` },
+          ].map((s, i) => (
+            <div key={s.label} style={{ background: '#0d0d0d', padding: '40px 32px' }}>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '64px', color: '#e8e4dc', lineHeight: 1, marginBottom: '8px' }}>
+                {s.value}
+              </div>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                {s.label}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* History Table */}
-        <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">📋 Analysis History</h2>
+        {/* History Section */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '24px', fontWeight: '700', color: '#f0ece4' }}>
+              Analysis History
+            </h2>
             {history.length > 0 && (
-              <span className="text-slate-500 text-sm">{history.length} record{history.length > 1 ? 's' : ''}</span>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#555' }}>
+                {history.length} RECORD{history.length > 1 ? 'S' : ''}
+              </span>
             )}
           </div>
 
-          {loading ? (
-            <div className="py-16 text-center">
-              <svg className="animate-spin w-8 h-8 text-blue-500 mx-auto mb-3" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-              </svg>
-              <p className="text-slate-500">Loading history...</p>
-            </div>
-          ) : history.length === 0 ? (
-            <div className="py-20 text-center">
-              <div className="text-5xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-white mb-2">No analyses yet</h3>
-              <p className="text-slate-400 mb-6">Run your first skill gap analysis to get started.</p>
-              <Link to="/analyze" className="px-6 py-3 bg-gradient-to-r from-blue-500 to-violet-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all">
-                Analyze Now →
-              </Link>
-            </div>
-          ) : (
-            <div className="divide-y divide-slate-700/40">
-              {history.map((item) => (
-                <Link
-                  key={item._id}
-                  to={`/results/${item._id}`}
-                  className="flex items-center justify-between px-6 py-4 hover:bg-slate-700/30 transition-colors group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 border border-slate-700 flex items-center justify-center text-lg">
-                      🎯
-                    </div>
-                    <div>
-                      <div className="text-white font-medium group-hover:text-blue-400 transition-colors">{item.jobTarget}</div>
-                      <div className="text-slate-500 text-xs mt-0.5">
-                        {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        {' · '}
-                        {item.matchingSkills?.length || 0} matched · {item.missingSkills?.length || 0} missing
+          <div style={{ borderTop: '1px solid #141414' }}>
+            {loading ? (
+              <div style={{ padding: '60px 0', textAlign: 'center', fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                Loading history...
+              </div>
+            ) : history.length === 0 ? (
+              <div style={{ padding: '80px 0', textAlign: 'center' }}>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '48px', color: '#333', marginBottom: '16px' }}>NO ANALYSES YET</div>
+                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: '#666', marginBottom: '32px' }}>
+                  Run your first skill gap analysis to generate your roadmap.
+                </p>
+                <Link to="/analyze" className="btn-ghost" style={{ display: 'inline-block' }}>
+                  Analyze Resume
+                </Link>
+              </div>
+            ) : (
+              <div>
+                {history.map((item) => (
+                  <Link
+                    key={item._id}
+                    to={`/results/${item._id}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '24px 0',
+                      borderBottom: '1px solid #141414',
+                      textDecoration: 'none',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#0f0f0f'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', paddingLeft: '16px' }}>
+                      <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', letterSpacing: '0.06em' }}>
+                        {new Date(item.createdAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })}
+                      </span>
+                      <div>
+                        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '16px', fontWeight: '600', color: '#e8e4dc', marginBottom: '4px' }}>
+                          {item.jobTarget}
+                        </div>
+                        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#444' }}>
+                          {item.matchingSkills?.length || 0} Matched · {item.missingSkills?.length || 0} Missing
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <ScoreBadge score={item.matchScore} />
-                    <svg className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', paddingRight: '16px' }}>
+                      <ScoreBadge score={item.matchScore} />
+                      <span style={{ color: '#333', fontSize: '18px' }}>→</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Quick tips */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-            <h4 className="text-sm font-semibold text-blue-400 mb-1">💡 Pro Tip</h4>
-            <p className="text-slate-400 text-sm">Paste the full job description for a more accurate match score. Generic job titles give approximate results.</p>
+        {/* Quick Tips - pure text block format */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', marginTop: '80px', paddingTop: '40px', borderTop: '1px solid #141414' }}>
+          <div>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#c8f135', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px' }}>
+              PRO TIP
+            </div>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: '#555', lineHeight: 1.7 }}>
+              Paste the full job description for a more accurate match score. Generic job titles give approximate results.
+            </p>
           </div>
-          <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4">
-            <h4 className="text-sm font-semibold text-violet-400 mb-1">🗺️ Roadmap</h4>
-            <p className="text-slate-400 text-sm">Follow your AI-generated learning plan weekly. Consistent 1–2 hours/day of focused learning closes gaps in 4–6 weeks.</p>
+          <div>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '12px' }}>
+              ROADMAP
+            </div>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: '#555', lineHeight: 1.7 }}>
+              Follow your generated learning plan weekly. Consistent 1–2 hours/day of focused learning closes gaps in 4–6 weeks.
+            </p>
           </div>
         </div>
+
       </div>
     </div>
   );

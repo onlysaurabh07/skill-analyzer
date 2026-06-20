@@ -36,11 +36,10 @@ mongoose
   })
   .catch((err) => {
     console.error('❌ MongoDB connection failed:', err.message);
+    console.log('🔍 Current MONGO_URI starts with:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 20) + '...' : 'undefined');
     console.error('');
-    console.error('🔧 FIX: Your current network is blocking MongoDB Atlas SRV DNS lookups.');
-    console.error('   Solutions:');
-    console.error('   1. Switch to a different network (mobile hotspot, home WiFi)');
-    console.error('   2. Use a VPN');
-    console.error('   3. In MongoDB Atlas → Network Access → Add IP: 0.0.0.0/0');
-    console.error('   4. Use local MongoDB: change MONGO_URI to mongodb://localhost:27017/skillgap');
+    console.error('🔧 Troubleshooting Steps:');
+    console.error('   1. Ensure 0.0.0.0/0 is ACTIVE in MongoDB Atlas -> Network Access.');
+    console.error('   2. Verify the username and password in your Render Environment Variables.');
+    console.error('   3. If using special characters in your password, ensure they are URL-encoded.');
   });

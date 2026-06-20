@@ -4,26 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
 function ScoreRing({ score }) {
-  const r = 52;
-  const circ = 2 * Math.PI * r;
-  const dash = (score / 100) * circ;
-  const color = score >= 70 ? '#22c55e' : score >= 40 ? '#f59e0b' : '#ef4444';
-
+  const color = score >= 70 ? '#c8f135' : score >= 40 ? '#f5c518' : '#ff5c5c';
   return (
-    <div className="relative w-36 h-36 flex items-center justify-center">
-      <svg className="w-36 h-36 -rotate-90" viewBox="0 0 128 128">
-        <circle cx="64" cy="64" r={r} fill="none" stroke="#1e293b" strokeWidth="12" />
-        <circle
-          cx="64" cy="64" r={r} fill="none"
-          stroke={color} strokeWidth="12"
-          strokeLinecap="round"
-          strokeDasharray={`${dash} ${circ}`}
-          style={{ transition: 'stroke-dasharray 1s ease' }}
-        />
-      </svg>
-      <div className="absolute text-center">
-        <div className="text-3xl font-extrabold text-white">{score}%</div>
-        <div className="text-xs text-slate-400">Match</div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', border: `1px solid ${color}`, background: `${color}10` }}>
+      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '96px', lineHeight: 1, color: color }}>
+        {score}%
+      </div>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: color, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '8px' }}>
+        Match Score
       </div>
     </div>
   );
@@ -31,13 +19,24 @@ function ScoreRing({ score }) {
 
 function SkillTag({ label, type }) {
   const styles = {
-    match: 'bg-green-500/15 border-green-500/30 text-green-400',
-    missing: 'bg-red-500/15 border-red-500/30 text-red-400',
-    neutral: 'bg-slate-700/50 border-slate-600 text-slate-300',
+    match: { color: '#c8f135', borderColor: '#c8f13540', bg: '#c8f13505' },
+    missing: { color: '#ff5c5c', borderColor: '#ff5c5c40', bg: '#ff5c5c05' },
+    neutral: { color: '#888', borderColor: '#333', bg: '#111' },
   };
+  const s = styles[type];
   return (
-    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-medium ${styles[type]}`}>
-      {type === 'match' && '✅'} {type === 'missing' && '❌'} {label}
+    <span style={{
+      display: 'inline-block',
+      fontFamily: "'Space Mono', monospace",
+      fontSize: '11px',
+      color: s.color,
+      background: s.bg,
+      border: `1px solid ${s.borderColor}`,
+      padding: '6px 12px',
+      textTransform: 'uppercase',
+      letterSpacing: '0.04em'
+    }}>
+      {type === 'match' && '[+] '} {type === 'missing' && '[-] '} {label}
     </span>
   );
 }
@@ -58,125 +57,138 @@ export default function Results() {
   }, [id, token]);
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <div className="text-center">
-        <svg className="animate-spin w-10 h-10 text-blue-500 mx-auto mb-4" viewBox="0 0 24 24" fill="none">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-        </svg>
-        <p className="text-slate-400">Loading results...</p>
+    <div style={{ minHeight: '100vh', background: '#0d0d0d', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '14px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.2em', animation: 'blink 1.5s infinite' }}>
+        Processing Results...
       </div>
     </div>
   );
 
   if (!data) return null;
 
-  const scoreColor = data.matchScore >= 70 ? 'text-green-400' : data.matchScore >= 40 ? 'text-yellow-400' : 'text-red-400';
-
   return (
-    <div className="min-h-screen bg-slate-900 pt-24 pb-16 px-4">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div style={{ minHeight: '100vh', background: '#0d0d0d', paddingTop: '100px', paddingBottom: '80px', color: '#e8e4dc' }}>
+      <div className="page-wrap" style={{ maxWidth: '1000px' }}>
+        
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-slate-500 text-sm mb-1">Analysis Results</div>
-            <h1 className="text-3xl font-bold text-white">🎯 {data.jobTarget}</h1>
-          </div>
-          <div className="flex gap-3">
-            <Link to="/analyze" className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition-colors">
-              New Analysis
-            </Link>
-            <Link to="/dashboard" className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition-colors">
-              Dashboard
-            </Link>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '64px', borderBottom: '1px solid #141414', paddingBottom: '40px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+            <div>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>
+                — analysis results
+              </div>
+              <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(48px, 6vw, 64px)', lineHeight: 0.9, color: '#f0ece4', textTransform: 'uppercase', maxWidth: '600px' }}>
+                {data.jobTarget}
+              </h1>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <Link to="/analyze" className="btn-ghost">
+                New Analysis
+              </Link>
+              <Link to="/dashboard" className="btn-ghost">
+                Dashboard
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Demo Mode Alert */}
         {data.isSampleData && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="text-2xl mt-0.5">⚠️</div>
-            <div>
-              <h3 className="text-amber-400 font-semibold">Demo Mode Active</h3>
-              <p className="text-amber-200/70 text-sm leading-relaxed">
-                The AI analysis service is currently unavailable (Quota Exceeded). We are showing <strong>simulated data</strong> based on your target role so you can still preview the experience.
-              </p>
-            </div>
+          <div style={{ padding: '24px', background: '#261b04', border: '1px solid #f5c518', marginBottom: '40px' }}>
+            <h3 style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#f5c518', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
+              [Demo Mode Active]
+            </h3>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: '#e8e4dc', lineHeight: 1.6 }}>
+              The AI analysis service is currently unavailable (Quota Exceeded). We are showing <strong>simulated data</strong> based on your target role so you can still preview the experience.
+            </p>
           </div>
         )}
 
-        {/* Score Card */}
-        <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8">
-          <ScoreRing score={data.matchScore} />
-          <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {data.matchScore >= 70 ? '🚀 Great match!' : data.matchScore >= 40 ? '📈 Good progress' : '🌱 Room to grow'}
-            </h2>
-            <p className="text-slate-400 mb-4">
-              You match <span className={`font-semibold ${scoreColor}`}>{data.matchScore}%</span> of the skills required for <strong className="text-white">{data.jobTarget}</strong>.
-              {data.missingSkills.length > 0 && ` You're missing ${data.missingSkills.length} key skill${data.missingSkills.length > 1 ? 's' : ''}.`}
-            </p>
-            <div className="flex gap-4 justify-center sm:justify-start text-sm">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">{data.matchingSkills.length}</div>
-                <div className="text-slate-500">Matched</div>
-              </div>
-              <div className="w-px bg-slate-700" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-400">{data.missingSkills.length}</div>
-                <div className="text-slate-500">Missing</div>
-              </div>
-              <div className="w-px bg-slate-700" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">{data.roadmap?.length || 0}</div>
-                <div className="text-slate-500">Week Plan</div>
+        {/* Score Card / Overview */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '40px', marginBottom: '64px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', alignItems: 'center' }}>
+            <ScoreRing score={data.matchScore} />
+            
+            <div style={{ flex: '1', minWidth: '300px' }}>
+              <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '24px', fontWeight: '700', color: '#e8e4dc', marginBottom: '16px' }}>
+                {data.matchScore >= 70 ? 'Strong Alignment' : data.matchScore >= 40 ? 'Moderate Gap' : 'Significant Gap'}
+              </h2>
+              <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '15px', color: '#888', lineHeight: 1.6, marginBottom: '32px', maxWidth: '500px' }}>
+                You match <strong style={{ color: '#e8e4dc' }}>{data.matchScore}%</strong> of the skills required for <strong style={{ color: '#e8e4dc' }}>{data.jobTarget}</strong>.
+                {data.missingSkills.length > 0 && ` You are missing ${data.missingSkills.length} key skills identified in the market.`}
+              </p>
+              
+              <div style={{ display: 'flex', gap: '32px', borderTop: '1px solid #2a2a2a', paddingTop: '24px' }}>
+                <div>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '32px', color: '#c8f135', lineHeight: 1 }}>{data.matchingSkills.length}</div>
+                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Matched</div>
+                </div>
+                <div>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '32px', color: '#ff5c5c', lineHeight: 1 }}>{data.missingSkills.length}</div>
+                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Missing</div>
+                </div>
+                <div>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '32px', color: '#e8e4dc', lineHeight: 1 }}>{data.roadmap?.length || 0}</div>
+                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Weeks</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="text-green-400">✅</span> Matching Skills ({data.matchingSkills.length})
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', marginBottom: '80px', borderTop: '1px solid #141414', paddingTop: '64px' }}>
+          <div>
+            <h3 style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#c8f135', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '24px' }}>
+              [+] Verified Skills ({data.matchingSkills.length})
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
               {data.matchingSkills.length > 0
                 ? data.matchingSkills.map((s) => <SkillTag key={s} label={s} type="match" />)
-                : <p className="text-slate-500 text-sm">No matching skills detected.</p>}
+                : <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#555' }}>No matching skills detected.</p>}
             </div>
           </div>
-          <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="text-red-400">❌</span> Missing Skills ({data.missingSkills.length})
+          <div>
+            <h3 style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#ff5c5c', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '24px' }}>
+              [-] Missing Skills ({data.missingSkills.length})
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
               {data.missingSkills.length > 0
                 ? data.missingSkills.map((s) => <SkillTag key={s} label={s} type="missing" />)
-                : <p className="text-slate-400 text-sm">🎉 No missing skills! You're a great fit.</p>}
+                : <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '12px', color: '#555' }}>No missing skills detected.</p>}
             </div>
           </div>
         </div>
 
         {/* Roadmap */}
         {data.roadmap?.length > 0 && (
-          <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              🗺️ Your {data.roadmap.length}-Week Learning Roadmap
+          <div style={{ borderTop: '1px solid #141414', paddingTop: '64px' }}>
+            <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '48px', color: '#e8e4dc', textTransform: 'uppercase', marginBottom: '40px' }}>
+              {data.roadmap.length}-Week Learning Plan
             </h3>
 
             {/* Week tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '16px', marginBottom: '40px', borderBottom: '1px solid #141414' }}>
               {data.roadmap.map((w, i) => (
                 <button
                   key={w.week}
                   onClick={() => setActiveWeek(i)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    activeWeek === i
-                      ? 'bg-gradient-to-r from-blue-500 to-violet-600 text-white shadow-lg'
-                      : 'bg-slate-700/60 text-slate-400 hover:bg-slate-700'
-                  }`}
+                  style={{
+                    padding: '12px 24px',
+                    background: activeWeek === i ? '#e8e4dc' : 'transparent',
+                    color: activeWeek === i ? '#0d0d0d' : '#888',
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    border: activeWeek === i ? '1px solid #e8e4dc' : '1px solid transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onMouseEnter={e => { if (activeWeek !== i) e.currentTarget.style.color = '#e8e4dc' }}
+                  onMouseLeave={e => { if (activeWeek !== i) e.currentTarget.style.color = '#888' }}
                 >
                   Week {w.week}
                 </button>
@@ -185,75 +197,68 @@ export default function Results() {
 
             {/* Active week content */}
             {data.roadmap[activeWeek] && (
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-lg font-semibold text-white mb-1">
-                    Week {data.roadmap[activeWeek].week}: {data.roadmap[activeWeek].focus}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
+                <div style={{ gridColumn: '1 / -1', marginBottom: '16px' }}>
+                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Week {data.roadmap[activeWeek].week} Focus
+                  </div>
+                  <h4 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '24px', fontWeight: '700', color: '#e8e4dc' }}>
+                    {data.roadmap[activeWeek].focus}
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Topics */}
-                  <div className="bg-slate-900/50 rounded-xl p-4">
-                    <h5 className="text-sm font-semibold text-slate-400 mb-3 uppercase tracking-wider">Topics to Cover</h5>
-                    <ul className="space-y-2">
-                      {data.roadmap[activeWeek].topics?.map((t, i) => (
-                        <li key={i} className="flex items-start gap-2 text-slate-300 text-sm">
-                          <span className="text-blue-400 mt-0.5">▸</span> {t}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Topics */}
+                <div style={{ border: '1px solid #2a2a2a', padding: '32px' }}>
+                  <h5 style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#e8e4dc', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '24px' }}>
+                    Topics to Cover
+                  </h5>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {data.roadmap[activeWeek].topics?.map((t, i) => (
+                      <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: '#888', lineHeight: 1.5 }}>
+                        <span style={{ color: '#555', fontFamily: "'Space Mono', monospace", fontSize: '10px', marginTop: '4px' }}>{String(i + 1).padStart(2, '0')}</span>
+                        <span>{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-                  {/* Resources */}
-                  <div className="bg-slate-900/50 rounded-xl p-4">
-                    <h5 className="text-sm font-semibold text-slate-400 mb-3 uppercase tracking-wider">Resources</h5>
-                    <ul className="space-y-2">
-                      {data.roadmap[activeWeek].resources?.map((r, i) => (
-                        <li key={i}>
-                          <a
-                            href={r.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors group"
-                          >
-                            <span className="text-xs bg-blue-500/20 border border-blue-500/30 rounded px-1.5 py-0.5 text-blue-300 capitalize">
-                              {r.type || 'link'}
-                            </span>
-                            <span className="group-hover:underline">{r.title}</span>
-                            <svg className="w-3 h-3 opacity-50 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Resources */}
+                <div style={{ border: '1px solid #2a2a2a', padding: '32px' }}>
+                  <h5 style={{ fontFamily: "'Space Mono', monospace", fontSize: '11px', color: '#e8e4dc', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '24px' }}>
+                    Recommended Resources
+                  </h5>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {data.roadmap[activeWeek].resources?.map((r, i) => (
+                      <li key={i}>
+                        <a
+                          href={r.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '12px',
+                            textDecoration: 'none', color: '#c8f135',
+                            fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px',
+                            transition: 'opacity 0.2s'
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+                          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                        >
+                          <span style={{
+                            fontFamily: "'Space Mono', monospace", fontSize: '9px', color: '#0d0d0d', background: '#c8f135',
+                            padding: '2px 6px', textTransform: 'uppercase', letterSpacing: '0.04em'
+                          }}>
+                            {r.type || 'link'}
+                          </span>
+                          <span style={{ borderBottom: '1px solid #c8f13540' }}>{r.title}</span>
+                          <span style={{ fontSize: '12px' }}>↗</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
-
-            {/* Timeline mini-view */}
-            <div className="mt-6 pt-6 border-t border-slate-700/50">
-              <h5 className="text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Full Timeline Overview</h5>
-              <div className="relative">
-                <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-slate-700" />
-                {data.roadmap.map((w, i) => (
-                  <div
-                    key={w.week}
-                    onClick={() => setActiveWeek(i)}
-                    className={`relative pl-10 pb-4 cursor-pointer group ${i === data.roadmap.length - 1 ? 'pb-0' : ''}`}
-                  >
-                    <div className={`absolute left-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all ${
-                      activeWeek === i ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-600 bg-slate-800 text-slate-500 group-hover:border-blue-500/50'
-                    }`}>{w.week}</div>
-                    <div className={`text-sm transition-colors ${activeWeek === i ? 'text-blue-400 font-medium' : 'text-slate-400 group-hover:text-slate-300'}`}>
-                      <strong>Week {w.week}:</strong> {w.focus}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            
           </div>
         )}
       </div>

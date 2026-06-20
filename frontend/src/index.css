@@ -1,18 +1,368 @@
 @import "tailwindcss";
 
+/* ── Google Fonts ─────────────────────────────────── */
+
+/* ── Reset & Base ──────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #0f172a;
-  color: #f1f5f9;
-  font-family: 'Inter', system-ui, sans-serif;
+  background: #0d0d0d;
+  color: #e8e4dc;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  cursor: default;
 }
 
 ::selection {
-  background-color: rgba(59, 130, 246, 0.3);
+  background: #c8f135;
+  color: #0d0d0d;
 }
 
-* {
-  box-sizing: border-box;
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #0d0d0d; }
+::-webkit-scrollbar-thumb { background: #333; }
+
+/* ── Type scale ─────────────────────────────────────── */
+.display-xl {
+  font-family: 'Bebas Neue', 'Space Grotesk', sans-serif;
+  font-size: clamp(80px, 14vw, 200px);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: #f0ece4;
+  text-transform: uppercase;
 }
 
+.display-lg {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 8vw, 120px);
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #f0ece4;
+}
+
+.display-md {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #f0ece4;
+}
+
+.mono {
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── Layout ─────────────────────────────────────────── */
+.page-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── Utility ────────────────────────────────────────── */
+.accent { color: #c8f135; }
+.accent-bg { background: #c8f135; color: #0d0d0d; }
+.dim { color: #666; }
+.border-raw { border: 1.5px solid #222; }
+.border-top { border-top: 1.5px solid #222; }
+.border-bottom { border-bottom: 1.5px solid #222; }
+
+/* ── Pill / Tag ─────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1a1a1a;
+  border: 1.5px solid #2a2a2a;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
+}
+
+.pill-accent {
+  background: #c8f135;
+  border-color: #c8f135;
+  color: #0d0d0d;
+}
+
+.pill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ── Float card (scattered UI fragments) ────────────── */
+.float-card {
+  background: #141414;
+  border: 1.5px solid #222;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: #aaa;
+  font-family: 'Space Mono', monospace;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ── Section label ──────────────────────────────────── */
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+/* ── Divider ────────────────────────────────────────── */
+.divider {
+  width: 100%;
+  height: 1.5px;
+  background: #1c1c1c;
+}
+
+/* ── Step number ────────────────────────────────────── */
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  line-height: 1;
+  color: #1e1e1e;
+  user-select: none;
+}
+
+/* ── Feature card ───────────────────────────────────── */
+.feat-card {
+  border: 1.5px solid #1e1e1e;
+  border-radius: 4px;
+  padding: 28px 24px;
+  transition: border-color 0.18s, background 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feat-card:hover {
+  border-color: #333;
+  background: #111;
+}
+
+.feat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 0;
+  background: #c8f135;
+  transition: height 0.22s ease;
+}
+
+.feat-card:hover::before { height: 100%; }
+
+/* ── Stat block ─────────────────────────────────────── */
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 6vw, 80px);
+  line-height: 1;
+  color: #f0ece4;
+  letter-spacing: 0.01em;
+}
+
+/* ── CTA button ─────────────────────────────────────── */
+.btn-raw {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #c8f135;
+  color: #0d0d0d;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1.5px solid #c8f135;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.12s;
+}
+
+.btn-raw:hover {
+  background: #d4ff3d;
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: transparent;
+  color: #888;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1.5px solid #282828;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-ghost:hover {
+  border-color: #444;
+  color: #ccc;
+}
+
+/* ── Skill bar ──────────────────────────────────────── */
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #181818;
+}
+
+.skill-bar-track {
+  flex: 1;
+  height: 4px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1.4s cubic-bezier(.4,0,.2,1) .3s;
+}
+
+/* ── Progress ring ──────────────────────────────────── */
+.ring-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Animations ─────────────────────────────────────── */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate(-3deg) scale(0.96); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-up { animation: fadeUp 0.55s ease forwards; }
+.animate-float { animation: floatY 3.5s ease-in-out infinite; }
+.blink { animation: blink 1.2s step-end infinite; }
+
+/* ── Ticker ─────────────────────────────────────────── */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1.5px solid #1c1c1c;
+  border-bottom: 1.5px solid #1c1c1c;
+  padding: 10px 0;
+  white-space: nowrap;
+}
+
+.ticker-inner {
+  display: inline-flex;
+  gap: 0;
+  animation: ticker 28s linear infinite;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 32px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #3a3a3a;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ticker-sep {
+  color: #c8f135;
+  font-size: 16px;
+}
+
+/* ── Diagonal stripe accent ─────────────────────────── */
+.stripe-accent {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    #1a1a1a 4px,
+    #1a1a1a 8px
+  );
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+.raw-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1.5px solid #1a1a1a;
+  background: rgba(13,13,13,0.96);
+  backdrop-filter: blur(10px);
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page-wrap { padding: 0 20px; }
+  .hide-mobile { display: none !important; }
+  .btn-raw, .btn-ghost { padding: 12px 20px; font-size: 13px; }
+}
