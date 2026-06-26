@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -25,21 +26,25 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT} (Network Accessible)`));
 
-// Connect to MongoDB (asynchronously)
-mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000,
-    socketTimeoutMS: 45000,
-  })
-  .then(() => {
+// Connect to MongoDB (try Atlas first, fall back to in-memory)
+async function connectDB() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     console.log('✅ MongoDB Atlas connected successfully');
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB connection failed:', err.message);
-    console.log('🔍 Current MONGO_URI starts with:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 20) + '...' : 'undefined');
-    console.error('');
-    console.error('🔧 Troubleshooting Steps:');
-    console.error('   1. Ensure 0.0.0.0/0 is ACTIVE in MongoDB Atlas -> Network Access.');
-    console.error('   2. Verify the username and password in your Render Environment Variables.');
-    console.error('   3. If using special characters in your password, ensure they are URL-encoded.');
-  });
+  } catch (err) {
+    console.log('⚠️  MongoDB Atlas connection failed, using in-memory database for development');
+    try {
+      const mongod = await MongoMemoryServer.create();
+      const uri = mongod.getUri();
+      await mongoose.connect(uri);
+      console.log('✅ In-memory MongoDB connected successfully');
+    } catch (inMemErr) {
+      console.error('❌ Failed to connect to any database:', inMemErr.message);
+    }
+  }
+}
+
+connectDB();
